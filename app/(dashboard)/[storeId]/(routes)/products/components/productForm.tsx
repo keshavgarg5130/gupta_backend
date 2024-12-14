@@ -49,6 +49,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
     const [loading, setLoading] = useState(false);
     const params = useParams();
     const router = useRouter();
+    const [value,setValue] = useState<{url:string}[]>([])
 
     const title = initialData ? "Edit product" : "Add product";
     const description = initialData ? "Edit a product" : "Add a product";
@@ -127,14 +128,23 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
                             <FormLabel> Images </FormLabel>
                             <FormControl>
                                 <ImageUpload
+                                    value={(value || []).map((image) => image.url)} // Map image objects to URLs
                                     disabled={loading}
                                     onChange={(url) => {
-                                        field.onChange([...(field.value || []), { url }]); // Ensure `url` is wrapped in an object
+                                        setValue((value)=>{
+                                            console.log("Updated field value:", value);
+                                            const updatedImages = [...value || [], { url }];
+                                            field.onChange(updatedImages);
+                                            return updatedImages;
+                                        }); // Update field value
                                     }}
                                     onRemove={(url) => {
-                                        field.onChange((field.value || []).filter((current) => current.url !== url)); // Safeguard for `undefined`
+                                        const filteredImages = (field.value || []).filter(
+                                            (current) => current.url !== url
+                                        );
+                                        field.onChange(filteredImages); // Remove image from field value
+                                        console.log("Filtered field value:", filteredImages);
                                     }}
-                                    value={(field.value || []).map((images) => images.url)} // Default to an empty array
                                 />
 
                             </FormControl>
