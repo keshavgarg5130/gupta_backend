@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useCallback, useState} from 'react'
+import React, { useState} from 'react'
 import {Modal} from "@/components/ui/modal";
 
 import {useStoreModal} from "@/hooks/use-store-modal";
@@ -34,7 +34,8 @@ export const StoreModal = () => {
             const response = await axios.post('api/stores', values)
             toast.success("store created successfully.")
             window.location.assign(`/${response.data.id}`)
-        }catch(error){
+        }catch(e){
+            console.log(e)
             toast.error("Something went wrong")
         }finally{
             setLoading(false)

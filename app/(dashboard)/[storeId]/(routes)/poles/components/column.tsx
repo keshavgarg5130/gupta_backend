@@ -8,7 +8,7 @@ import {CellAction} from "@/app/(dashboard)/[storeId]/(routes)/poles/components/
 // You can use a Zod schema here if you want.
 export type PoleColumn= {
     id: string
-    name: String
+    name: string
     value: string
     createdAt: string
 }

@@ -14,9 +14,9 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import {useParams, useRouter} from "next/navigation";
 import {AlertModal} from "@/components/modals/alert-modal";
-import {ApiAlert} from "@/components/ui/api-alert";
-import {useOrigin} from "@/hooks/use-origin";
-import ImageUpload from "@/components/ui/image_upload";
+
+
+
 import {CurrentRating} from "@prisma/client";
 
 
@@ -61,6 +61,7 @@ export const CurrentRatingForm: React.FC<CurrentRatingFormProps> = ({initialData
             router.push(`/${params.storeId}/currentRating`);
             toast.success(toastMessage)
         }catch(error){
+            console.log(error)
             toast.error("something went wrong");
         }finally{
             setLoading(false);

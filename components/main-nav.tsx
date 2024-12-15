@@ -6,6 +6,7 @@ import Link from "next/link";
 
 export function MainNav({className, ...props}:React.HTMLAttributes<HTMLElement>) {
     const pathname = usePathname()
+    console.log(props)
     const params = useParams()
     const routes = [{
         href:`/${params.storeId}`,

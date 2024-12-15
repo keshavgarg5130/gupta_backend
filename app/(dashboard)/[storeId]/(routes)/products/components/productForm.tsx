@@ -14,8 +14,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import {useParams, useRouter} from "next/navigation";
 import {AlertModal} from "@/components/modals/alert-modal";
-import {ApiAlert} from "@/components/ui/api-alert";
-import {useOrigin} from "@/hooks/use-origin";
+
+
 import ImageUpload from "@/components/ui/image_upload";
 import {Category, CurrentRating, Image, Poles, Product} from "@prisma/client";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
@@ -88,6 +88,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
             router.push(`/${params.storeId}/products`);
             toast.success(toastMessage)
         }catch(error){
+            console.log(error)
             toast.error("something went wrong");
         }finally{
             setLoading(false);
@@ -108,7 +109,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
             setOpen(false);
         }
     }
-    // @ts-ignore
+
     return (
         <>
             <AlertModal isOpen={open} onClose={()=>setOpen(false)} loading={loading} onConfirm={onDelete}/>

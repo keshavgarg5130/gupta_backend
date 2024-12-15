@@ -47,6 +47,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({initialData})=> {
             router.refresh()
             toast.success("Successfully updated stores")
         }catch(error){
+            console.log(error)
             toast.error("something went wrong");
         }finally{
             setLoading(false);

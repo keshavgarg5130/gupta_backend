@@ -1,6 +1,6 @@
 "use client"
 
-import React, {Fragment, useEffect, useState} from "react";
+import React, { useEffect, useState} from "react";
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
 import {ImagePlus, Trash} from "lucide-react";
@@ -21,7 +21,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({disabled,onChange,onRemove,val
         setIsMounted(true);
     },[])
 
-    const onUpload = (result:any) =>{
+    const onUpload = (result:object) =>{
+
+        // @ts-expect-error/ban-ts-comment
         onChange(result.info.secure_url);
     }
     if(!isMounted){
@@ -47,7 +49,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({disabled,onChange,onRemove,val
                     </div>
                 ))}
             </div>
-            <CldUploadWidget onSuccess={onUpload} uploadPreset="gupta_associates">
+            <CldUploadWidget onSuccess={onUpload} uploadPreset="guptaBackend">
                 {({open})=>{
                     const onClick = () => {
                         open();

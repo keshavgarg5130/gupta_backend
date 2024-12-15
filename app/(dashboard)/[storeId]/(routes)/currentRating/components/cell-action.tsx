@@ -1,6 +1,6 @@
 "use client"
 
-import {BillboardColumn} from "@/app/(dashboard)/[storeId]/(routes)/billboards/components/column";
+
 import {
     DropdownMenu,
     DropdownMenuContent,

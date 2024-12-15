@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import prismadb from "@/lib/prismadb";
+
 import {ClerkProvider} from "@clerk/nextjs";
 import {ModalProvider} from "@/providers/modal-provider";
 import {ToastProvider} from "@/providers/toast-provider";

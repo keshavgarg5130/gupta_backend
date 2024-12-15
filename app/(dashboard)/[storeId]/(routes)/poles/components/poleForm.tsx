@@ -59,6 +59,7 @@ export const PoleForm: React.FC<CurrentRatingFormProps> = ({initialData})=> {
             router.push(`/${params.storeId}/poles`);
             toast.success(toastMessage)
         }catch(error){
+            console.log(error)
             toast.error("something went wrong");
         }finally{
             setLoading(false);

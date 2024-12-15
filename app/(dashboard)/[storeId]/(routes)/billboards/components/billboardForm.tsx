@@ -8,15 +8,15 @@ import { Trash} from "lucide-react";
 import {Separator} from "@/components/ui/separator";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Fragment, useState} from "react";
+import { useState} from "react";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import toast from "react-hot-toast";
 import axios from "axios";
 import {useParams, useRouter} from "next/navigation";
 import {AlertModal} from "@/components/modals/alert-modal";
-import {ApiAlert} from "@/components/ui/api-alert";
-import {useOrigin} from "@/hooks/use-origin";
+
+
 import ImageUpload from "@/components/ui/image_upload";
 
 
@@ -61,6 +61,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({initialData})=> {
             router.push(`/${params.storeId}/billboards`);
             toast.success(toastMessage)
         }catch(error){
+            console.log(error)
             toast.error("something went wrong");
         }finally{
             setLoading(false);
