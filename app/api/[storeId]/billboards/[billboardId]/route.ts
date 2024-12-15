@@ -3,7 +3,6 @@ import {auth} from "@clerk/nextjs/server";
 import prismadb from "@/lib/prismadb";
 
 export async function GET (
-    req: Request,
     { params }: { params: { billboardId: string}},
 ){
     try {
