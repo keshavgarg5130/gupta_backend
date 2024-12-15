@@ -14,17 +14,15 @@ datasource db {
 }
 
 model Store {
-  id            String          @id @default(uuid())
-  name          String
-  userId        String
-  billboard     Billboard[]     @relation("StoreToBillboards")
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  categories    Category[]      @relation("StoreToCategory")
-  CurrentRating CurrentRating[] @relation("StoreToCurrentRating")
-  Poles         Poles[]         @relation("StoreToPoles")
-  Products      Product[]       @relation("StoreToProducts")
-  order         Order[]         @relation("StoreToOrder")
+  id         String      @id @default(uuid())
+  name       String
+  userId     String
+  billboard  Billboard[] @relation("StoreToBillboards")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  categories Category[]  @relation("StoreToCategory")
+  Products   Product[]   @relation("StoreToProducts")
+  order      Order[]     @relation("StoreToOrder")
 }
 
 model Billboard {
@@ -41,61 +39,71 @@ model Billboard {
 }
 
 model Category {
-  id          String    @id @default(uuid())
+  id          String     @id @default(uuid())
   storeId     String
-  store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
+  store       Store      @relation("StoreToCategory", fields: [storeId], references: [id])
   billboardId String
-  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  billboard   Billboard  @relation(fields: [billboardId], references: [id])
   name        String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  products    Product[] @relation("CategoryToProducts")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  products    Product[]  @relation("CategoryToProducts")
+  Varients    Varients[]
+  Varients    Varients[]
 
   @@index([storeId])
   @@index([billboardId])
 }
 
 model Product {
-  id         String      @id @default(uuid())
+  id         String       @id @default(uuid())
   storeId    String
-  store      Store       @relation("StoreToProducts", fields: [storeId], references: [id])
+  store      Store        @relation("StoreToProducts", fields: [storeId], references: [id])
   categoryId String
-  category   Category    @relation("CategoryToProducts", fields: [categoryId], references: [id])
+  category   Category     @relation("CategoryToProducts", fields: [categoryId], references: [id])
   name       String
   mPrice     Decimal
   gstRate    Decimal
   price      Decimal
-  isFeatured Boolean     @default(false)
-  isArchived Boolean     @default(false)
+  isFeatured Boolean      @default(false)
+  isArchived Boolean      @default(false)
   images     Image[]
   orderItem  OrderItem[]
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Varients   Varients[]
+  PriceTable PriceTable[]
+  Varients   Varients[]
+  PriceTable PriceTable[]
 
   @@index([storeId])
   @@index([categoryId])
 }
 
 model VarientTypes {
-  id         String      @id @default(uuid())
+  id      String @id @default(uuid())
   varient String
 }
 
-model Varients{
-  id         String      @id @default(uuid())
-  productId String
-  product Product @relation("PriceTableToProduct", fields:[productId], references:[id])
+model Varients {
+  id             String    @id @default(uuid())
+  productId      String
+  product        Product   @relation("PriceTableToProduct", fields: [productId], references: [id])
   varientTypesId String
-  varientTypes Category @relation("varientTypes",fields:[varientTypesId],references:[id])
-  varient String
+  varientTypes   Category  @relation("varientTypes", fields: [varientTypesId], references: [id])
+  varient        String
+  Category       Category? @relation(fields: [categoryId], references: [id])
+  categoryId     String?
+  Product        Product   @relation(fields: [productId], references: [id])
 }
 
-model PriceTable{
-  id         String      @id @default(uuid())
+model PriceTable {
+  id        String  @id @default(uuid())
   productId String
-  product Product @relation("PriceTableToProduct", fields:[productId], references:[id])
-  varient String
-  price Decimal
+  product   Product @relation("PriceTableToProduct", fields: [productId], references: [id])
+  varient   String
+  price     Decimal
+  Product   Product @relation(fields: [productId], references: [id])
 }
 
 model Image {
