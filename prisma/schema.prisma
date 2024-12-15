@@ -55,57 +55,47 @@ model Category {
   @@index([billboardId])
 }
 
-model CurrentRating {
-  id        String    @id @default(uuid())
-  storeId   String
-  store     Store     @relation("StoreToCurrentRating", fields: [storeId], references: [id])
-  name      String
-  value     String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Products  Product[]
-
-  @@index([storeId])
-}
-
-model Poles {
-  id        String    @id @default(uuid())
-  storeId   String
-  store     Store     @relation("StoreToPoles", fields: [storeId], references: [id])
-  name      String
-  value     String
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  @@index([storeId])
-}
-
 model Product {
-  id              String        @id @default(uuid())
-  storeId         String
-  store           Store         @relation("StoreToProducts", fields: [storeId], references: [id])
-  categoryId      String
-  category        Category      @relation("CategoryToProducts", fields: [categoryId], references: [id])
-  name            String
-  mPrice          Decimal
-  gstRate         Decimal
-  price           Decimal
-  isFeatured      Boolean       @default(false)
-  isArchived      Boolean       @default(false)
-  currentRatingId String
-  currentRating   CurrentRating @relation(fields: [currentRatingId], references: [id])
-  poles           Poles         @relation(fields: [polesId], references: [id])
-  polesId         String
-  images          Image[]
-  orderItem       OrderItem[]
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id         String      @id @default(uuid())
+  storeId    String
+  store      Store       @relation("StoreToProducts", fields: [storeId], references: [id])
+  categoryId String
+  category   Category    @relation("CategoryToProducts", fields: [categoryId], references: [id])
+  name       String
+  mPrice     Decimal
+  gstRate    Decimal
+  price      Decimal
+  isFeatured Boolean     @default(false)
+  isArchived Boolean     @default(false)
+  images     Image[]
+  orderItem  OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@index([storeId])
   @@index([categoryId])
-  @@index([currentRatingId])
-  @@index([polesId])
+}
+
+model VarientTypes {
+  id         String      @id @default(uuid())
+  varient String
+}
+
+model Varients{
+  id         String      @id @default(uuid())
+  productId String
+  product Product @relation("PriceTableToProduct", fields:[productId], references:[id])
+  varientTypesId String
+  varientTypes Category @relation("varientTypes",fields:[varientTypesId],references:[id])
+  varient String
+}
+
+model PriceTable{
+  id         String      @id @default(uuid())
+  productId String
+  product Product @relation("PriceTableToProduct", fields:[productId], references:[id])
+  varient String
+  price Decimal
 }
 
 model Image {
