@@ -25,6 +25,7 @@ model Store {
   Poles         Poles[]         @relation("StoreToPoles")
   Products      Product[]       @relation("StoreToProducts")
   order         Order[]         @relation("StoreToOrder")
+  Brand         Brand[]         @relation("StoreToBrand")
 }
 
 model Billboard {
@@ -36,6 +37,7 @@ model Billboard {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   categories Category[]
+  Brand      Brand[]    @relation("BrandToBillboard")
 
   @@index([storeId])
 }
@@ -50,6 +52,21 @@ model Category {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   products    Product[] @relation("CategoryToProducts")
+
+  @@index([storeId])
+  @@index([billboardId])
+}
+
+model Brand {
+  id          String    @id @default(uuid())
+  storeId     String
+  store       Store     @relation("StoreToBrand", fields: [storeId], references: [id])
+  billboardId String
+  billboard   Billboard @relation("BrandToBillboard", fields: [billboardId], references: [id])
+  name        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  product     Product[] @relation("BrandToProducts")
 
   @@index([storeId])
   @@index([billboardId])
@@ -87,7 +104,10 @@ model Product {
   store           Store         @relation("StoreToProducts", fields: [storeId], references: [id])
   categoryId      String
   category        Category      @relation("CategoryToProducts", fields: [categoryId], references: [id])
+  brand           Brand         @relation("BrandToProducts", fields: [brandId], references: [id])
+  brandId         String
   name            String
+  description     String
   mPrice          Decimal
   gstRate         Decimal
   price           Decimal
@@ -106,6 +126,7 @@ model Product {
   @@index([categoryId])
   @@index([currentRatingId])
   @@index([polesId])
+  @@index([brandId])
 }
 
 model Image {

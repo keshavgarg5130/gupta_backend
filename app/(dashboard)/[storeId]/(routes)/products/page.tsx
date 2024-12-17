@@ -19,6 +19,7 @@ const ProductsPage = async ({
             category: true,
             currentRating: true,
             poles: true,
+            brand:true,
         },
         orderBy:{
             createdAt: 'desc'
@@ -35,6 +36,8 @@ const ProductsPage = async ({
         category: item.category.name,
         currentRating: item.currentRating.name,
         poles: item.poles.value,
+        description: item.description,
+        brand: item.brand.name,
         createdAt: format(item.createdAt,"MMMM do, yyyy"),
 
     }))

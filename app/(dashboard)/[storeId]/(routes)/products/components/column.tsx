@@ -15,6 +15,8 @@ export type ProductColumn= {
     isFeatured: boolean
     isArchived: boolean
     gstRate: number
+    description: string
+    brand: string
     mPrice: string
     createdAt: string
 }
@@ -38,6 +40,9 @@ export const columns: ColumnDef<ProductColumn>[] = [
     },{
         accessorKey: "isFeatured",
         header: "IsFeatured",
+    },{
+        accessorKey: "brand",
+        header: "Brand",
     },{
         accessorKey: "currentRating",
         header: "Current Rating",

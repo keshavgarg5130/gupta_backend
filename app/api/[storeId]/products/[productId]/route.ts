@@ -20,6 +20,7 @@ export async function GET (
                 category:true,
                 currentRating: true,
                 poles: true,
+                brand: true,
             }
 
         })
@@ -37,7 +38,7 @@ export async function PATCH (
         const {userId} = await auth()
         const body = await req.json()
 
-        const{ name, images, mPrice, price, gstRate, categoryId, currentRatingId, polesId, isFeatured, isArchived}= body
+        const{ name, images, mPrice, price, gstRate,description, categoryId,brandId, currentRatingId, polesId, isFeatured, isArchived}= body
 
 
         if(!userId){
@@ -56,6 +57,8 @@ export async function PATCH (
         }
         if(!gstRate){
             return new NextResponse("gstRate is Required",{status: 400})
+        }if(!description){
+            return new NextResponse("description is Required",{status: 400})
         }
         if(!categoryId){
             return new NextResponse("CategoryId is Required",{status: 400})
@@ -78,9 +81,11 @@ export async function PATCH (
                 price,
                 gstRate,
                 categoryId,
+                brandId,
                 currentRatingId,
                 polesId,
                 isFeatured,
+                description,
                 isArchived,
                 images: {
                     deleteMany: {}

@@ -17,7 +17,7 @@ import {AlertModal} from "@/components/modals/alert-modal";
 
 
 import ImageUpload from "@/components/ui/image_upload";
-import {Category, CurrentRating, Image, Poles, Product} from "@prisma/client";
+import {Brand, Category, CurrentRating, Image, Poles, Product} from "@prisma/client";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 
@@ -29,8 +29,10 @@ const formSchema = z.object({
     mPrice: z.coerce.number().min(1),
     gstRate: z.coerce.number().min(1),
     categoryId: z.string().min(1),
-    currentRatingId: z.string().min(1),
-    polesId: z.string().min(1),
+    currentRatingId: z.string(),
+    description: z.string().min(1),
+    polesId:z.string(),
+    brandId: z.string().min(1),
     isFeatured: z.boolean().default(false).optional(),
     isArchived: z.boolean().default(false).optional(),
 })
@@ -42,15 +44,16 @@ interface ProductFormProps {
     categories : Category[];
     currentRating: CurrentRating[];
     poles: Poles[];
+    brands: Brand[];
 }
 
-export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,currentRating,poles})=> {
+export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,currentRating,brands,poles})=> {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const params = useParams();
     const router = useRouter();
     const [value,setValue] = useState<{url:string}[]>([])
-
+    const [searchTerm, setSearchTerm] = useState("");
     const title = initialData ? "Edit product" : "Add product";
     const description = initialData ? "Edit a product" : "Add a product";
     const toastMessage = initialData ? "Product Updated." : "Product Created.";
@@ -71,11 +74,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
             gstRate:18,
             categoryId:'',
             currentRatingId:'',
+            description:'',
+            brandId:'',
             polesId:'',
             isFeatured: false,
             isArchived: false,
         },
     })
+
 
     const onSubmit = async (values:ProductFormValues)=>{
         try {
@@ -213,22 +219,22 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
                                 <FormMessage/>
                             </FormItem>
                         )}/>
-                        <FormField name="currentRatingId" control={form.control} render={({field}) => (
+                        <FormField name="brandId" control={form.control} render={({field}) => (
                             <FormItem>
-                                <FormLabel>Current Rating</FormLabel>
+                                <FormLabel>Brands</FormLabel>
                                 <FormControl>
                                     <Select disabled={loading} onValueChange={field.onChange}
                                             defaultValue={field.value}
                                     >
                                         <FormControl>
                                             <SelectTrigger>
-                                                <SelectValue defaultValue={field.value} placeholder="Select a Current Rating" />
+                                                <SelectValue defaultValue={field.value} placeholder="Select a Brand" />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {currentRating.map((currentRating)=>(
-                                                <SelectItem key={currentRating.id} value={currentRating.id}>
-                                                    {currentRating.name}
+                                            {brands.map((brand)=>(
+                                                <SelectItem key={brand.id} value={brand.id}>
+                                                    {brand.name}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -237,6 +243,46 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
                                 <FormMessage/>
                             </FormItem>
                         )}/>
+                        <FormField name="currentRatingId" control={form.control} render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Current Rating</FormLabel>
+                                <FormControl>
+                                    <div className="space-y-2">
+                                        <Input
+                                            type="text"
+                                            placeholder="Search Current Ratings..."
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                            disabled={loading}
+                                        />
+                                        <Select
+                                            disabled={loading}
+                                            onValueChange={field.onChange}
+                                            defaultValue={field.value}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue defaultValue={field.value} placeholder="Select a Current Rating" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {currentRating
+                                                    .filter((rating) =>
+                                                        rating.name.toLowerCase().includes(searchTerm.toLowerCase())
+                                                    )
+                                                    .map((filteredRating) => (
+                                                        <SelectItem key={filteredRating.id} value={filteredRating.id}>
+                                                            {filteredRating.name}
+                                                        </SelectItem>
+                                                    ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+
                         <FormField name="polesId" control={form.control} render={({field}) => (
                             <FormItem>
                                 <FormLabel>Poles</FormLabel>
@@ -257,6 +303,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
                                             ))}
                                         </SelectContent>
                                     </Select>
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}/>
+                        <FormField name='description' control={form.control} render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                    <Input disabled={loading} placeholder='Product description' {...field}/>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>

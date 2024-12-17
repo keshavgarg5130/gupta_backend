@@ -24,6 +24,11 @@ export function MainNav({className, ...props}:React.HTMLAttributes<HTMLElement>)
         active: pathname === `/${params.storeId}/categories`,
 
     },{
+        href:`/${params.storeId}/brands`,
+        label: "Brands",
+        active: pathname === `/${params.storeId}/brands`,
+
+    },{
         href:`/${params.storeId}/currentRating`,
         label: "Current Rating",
         active: pathname === `/${params.storeId}/currentRating`,
