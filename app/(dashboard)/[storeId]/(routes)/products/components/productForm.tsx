@@ -12,6 +12,7 @@ import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, Form
 import {Input} from "@/components/ui/input";
 import toast from "react-hot-toast";
 import axios from "axios";
+
 import {useParams, useRouter} from "next/navigation";
 import {AlertModal} from "@/components/modals/alert-modal";
 
@@ -52,7 +53,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
     const [loading, setLoading] = useState(false);
     const params = useParams();
     const router = useRouter();
-    const [value,setValue] = useState<{url:string}[]>([])
+
     const [searchTerm, setSearchTerm] = useState("");
     const title = initialData ? "Edit product" : "Add product";
     const description = initialData ? "Edit a product" : "Add a product";
@@ -134,25 +135,52 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
                         <FormItem>
                             <FormLabel> Images </FormLabel>
                             <FormControl>
-                                <ImageUpload
-                                    value={(value || []).map((image) => image.url)} // Map image objects to URLs
-                                    disabled={loading}
-                                    onChange={(url) => {
-                                        setValue((value)=>{
-                                            console.log("Updated field value:", value);
-                                            const updatedImages = [...value || [], { url }];
-                                            field.onChange(updatedImages);
-                                            return updatedImages;
-                                        }); // Update field value
-                                    }}
-                                    onRemove={(url) => {
-                                        const filteredImages = (field.value || []).filter(
-                                            (current) => current.url !== url
-                                        );
-                                        field.onChange(filteredImages); // Remove image from field value
-                                        console.log("Filtered field value:", filteredImages);
-                                    }}
-                                />
+                                <div className="space-y-4">
+                                    {/* Show previously uploaded images */}
+                                    <div className="flex flex-wrap gap-4">
+                                        {(field.value || []).map((image, index) => (
+                                            <div key={index} className="relative group">
+                                                <img
+                                                    src={image.url}
+                                                    alt={`Uploaded image ${index + 1}`}
+                                                    className="w-32 h-32 object-cover rounded-md"
+                                                />
+                                                {/* Delete button */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const filteredImages = (field.value || []).filter(
+                                                            (current) => current.url !== image.url
+                                                        );
+                                                        field.onChange(filteredImages); // Update field value
+                                                        console.log("Filtered field value:", filteredImages);
+                                                    }}
+                                                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Upload new images */}
+                                    <ImageUpload
+                                        value={(field.value || []).map((img) => img.url)} // Map image objects to URLs
+                                        disabled={loading}
+                                        onChange={(url) => {
+                                            const updatedImages = [...(field.value || []), {url}];
+                                            field.onChange(updatedImages); // Update field value
+                                            console.log("Updated field value:", updatedImages);
+                                        }}
+                                        onRemove={(url) => {
+                                            const filteredImages = (field.value || []).filter(
+                                                (current) => current.url !== url
+                                            );
+                                            field.onChange(filteredImages); // Update field value
+                                            console.log("Filtered field value:", filteredImages);
+                                        }}
+                                    />
+                                </div>
 
                             </FormControl>
                             <FormMessage/>
@@ -178,19 +206,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
                             </FormItem>
                         )}/>
                         <FormField name='price' control={form.control} render={({field}) => (
-                        <FormItem>
-                            <FormLabel>Sale Price</FormLabel>
-                            <FormControl>
-                                <Input type='number' disabled={loading} placeholder='Sale Price' {...field}/>
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}/>
+                            <FormItem>
+                                <FormLabel>Sale Price</FormLabel>
+                                <FormControl>
+                                    <Input type='number' disabled={loading} placeholder='Sale Price' {...field}/>
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}/>
                         <FormField name='gstRate' control={form.control} render={({field}) => (
                             <FormItem>
                                 <FormLabel>GST RATE(%)</FormLabel>
                                 <FormControl>
-                                    <Input type='number' disabled={loading} placeholder='18' {...field}/>
+                                <Input type='number' disabled={loading} placeholder='18' {...field}/>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
