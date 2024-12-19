@@ -188,10 +188,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
                                         }); // Update field value
                                     }}
                                         onRemove={(url) => {
-                                        const filteredImage = (field.value || []).filter(
+                                        const filteredImage = (value || []).filter(
                                             (current) => current.url !== url
                                         );
-                                        field.onChange(filteredImage); // Remove image from field value
+                                        field.onChange(filteredImage);
+                                        setValue(filteredImage)// Remove image from field value
                                     }}
                                         />
 
