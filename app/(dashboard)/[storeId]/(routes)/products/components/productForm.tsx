@@ -12,13 +12,14 @@ import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, Form
 import {Input} from "@/components/ui/input";
 import toast from "react-hot-toast";
 import axios from "axios";
-
+import { Image as PrismaImage } from "@prisma/client";
 import {useParams, useRouter} from "next/navigation";
 import {AlertModal} from "@/components/modals/alert-modal";
 
-
+import Image from "next/image"
 import ImageUpload from "@/components/ui/image_upload";
-import {Brand, Category, CurrentRating, Image, Poles, Product} from "@prisma/client";
+import {Brand, Category, CurrentRating, Poles, Product} from "@prisma/client";
+
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 
@@ -41,7 +42,7 @@ const formSchema = z.object({
 type ProductFormValues = z.infer<typeof formSchema>;
 
 interface ProductFormProps {
-    initialData: Product & {images: Image[]}| null;
+    initialData: Product & {images: PrismaImage[]}| null;
     categories : Category[];
     currentRating: CurrentRating[];
     poles: Poles[];
@@ -53,20 +54,23 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
     const [loading, setLoading] = useState(false);
     const params = useParams();
     const router = useRouter();
-    const [value,setValue] = useState<{url:string}[]>([])
+    const [value, setValue] = useState<{ url: string }[]>(
+        initialData?.images || []
+    );
     const [searchTerm, setSearchTerm] = useState("");
     const title = initialData ? "Edit product" : "Add product";
     const description = initialData ? "Edit a product" : "Add a product";
     const toastMessage = initialData ? "Product Updated." : "Product Created.";
     const action = initialData ? "Save changes" : "create";
 
+
     const form = useForm<ProductFormValues>({
         resolver:zodResolver(formSchema),
         defaultValues:initialData ? {
             ...initialData,
             price: parseFloat(String(initialData?.price)),
-            mPrice: parseFloat(String(initialData?.price)),
-            gstRate: parseFloat(String(initialData?.price))
+            mPrice: parseFloat(String(initialData?.mPrice)),
+            gstRate: parseFloat(String(initialData?.gstRate))
         } : {
             name:'',
             images:[],
@@ -131,64 +135,74 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
             <Separator/>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 w-full'>
-                    <FormField name='images' control={form.control} render={({field}) => (
-                        <FormItem>
-                            <FormLabel> Images </FormLabel>
-                            <FormControl>
-                                <div className="space-y-4">
-                                    {/* Show previously uploaded images */}
-                                    <div className="flex flex-wrap gap-4">
-                                        {(field.value || []).map((image, index) => (
-                                            <div key={index} className="relative group">
-                                                <img
-                                                    src={image.url}
-                                                    alt={`Uploaded image ${index + 1}`}
-                                                    className="w-32 h-32 object-cover rounded-md"
-                                                />
-                                                {/* Delete button */}
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        const filteredImages = (field.value || []).filter(
-                                                            (current) => current.url !== image.url
-                                                        );
-                                                        field.onChange(filteredImages); // Update field value
-                                                        console.log("Filtered field value:", filteredImages);
-                                                    }}
-                                                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                                >
-                                                    ✕
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
 
-                                    {/* Upload new images */}
-                                    <ImageUpload
+                    <FormField
+                        name="images"
+                        control={form.control}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Images</FormLabel>
+                                <FormControl>
+                                    <div className="space-y-4">
+
+                                        {/* Show previously uploaded images */}
+                                        <div className="flex flex-wrap gap-4">
+                                            {(field.value || []).map((image, index) => (
+                                                <div key={index} className="relative group">
+                                                    <Image
+                                                        src={image.url}
+                                                        alt={`Uploaded image ${index + 1}`}
+                                                        className="w-32 h-32 object-cover rounded-md"
+                                                        width={128} // or any desired width
+                                                        height={128}
+
+                                                    />
+                                                    {/* Delete button */}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const filteredImages = (field.value || []).filter(
+                                                                (current) => current.url !== image.url
+                                                            );
+                                                            field.onChange(filteredImages); // Update field value
+                                                        }}
+                                                        className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Upload new images */}
+                                        <ImageUpload
+
                                         value={(value || []).map((image) => image.url)} // Map image objects to URLs
                                         disabled={loading}
                                         onChange={(url) => {
-                                            setValue((value)=>{
-                                                console.log("Updated field value:", value);
-                                                const updatedImages = [...value || [], { url }];
-                                                field.onChange(updatedImages);
-                                                return updatedImages;
-                                            }); // Update field value
-                                        }}
+                                        setValue((value)=>{
+                                            console.log("Updated field value:", value);
+                                            const updatedImages = [...value || [], { url }];
+                                            field.onChange(updatedImages);
+                                            return updatedImages;
+                                        }); // Update field value
+                                    }}
                                         onRemove={(url) => {
-                                            const filteredImages = (field.value || []).filter(
-                                                (current) => current.url !== url
-                                            );
-                                            field.onChange(filteredImages); // Remove image from field value
-                                            console.log("Filtered field value:", filteredImages);
-                                        }}
-                                    />
-                                </div>
+                                        const filteredImage = (field.value || []).filter(
+                                            (current) => current.url !== url
+                                        );
+                                        field.onChange(filteredImage); // Remove image from field value
+                                    }}
+                                        />
 
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}/>
+
+                                    </div>
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+
+
                     <div className='grid grid-cols-3 gap-8'>
                         <FormField name='name' control={form.control} render={({field}) => (
                             <FormItem>

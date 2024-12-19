@@ -24,6 +24,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({disabled,onChange,onRemove,val
     const onUpload = (result:object) =>{
 
         // @ts-expect-error/ban-ts-comment
+
         onChange(result.info.secure_url);
     }
     if(!isMounted){
