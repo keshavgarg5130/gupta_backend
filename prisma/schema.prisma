@@ -26,6 +26,7 @@ model Store {
   Products      Product[]       @relation("StoreToProducts")
   order         Order[]         @relation("StoreToOrder")
   Brand         Brand[]         @relation("StoreToBrand")
+  User          User[]          @relation("StoreToUser")
 }
 
 model Billboard {
@@ -160,4 +161,18 @@ model OrderItem {
   orderId   String
   productId String
   product   Product @relation(fields: [productId], references: [id])
+}
+
+model User {
+  id        String   @id @default(uuid())
+  storeId   String
+  store     Store    @relation("StoreToUser", fields: [storeId], references: [id])
+  name      String
+  email     String   @unique
+  number    Decimal
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storeId])
 }
