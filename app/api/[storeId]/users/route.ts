@@ -53,7 +53,8 @@ export async function POST(
                 storeId: params.storeId,
             }
         })
-        console.log(user)
+
+        return NextResponse.json({ user });
 
     }catch (error) {
         console.log('USERS_POST',error)
