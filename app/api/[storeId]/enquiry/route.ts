@@ -3,9 +3,9 @@ import nodemailer from 'nodemailer';
 
 
 // Sample credentials (in a real scenario, these would be environment variables)
-const SMTP_HOST = 'keshav.garg.5130@gmail.com'
+const SMTP_HOST = 'smtp.gmail.com'
 const SMTP_PORT = 587
-const SMTP_USER = 'guptaswitchgears@gmail.com'
+const SMTP_USER = 'keshav.garg.5130@gmail.com'
 const SMTP_PASSWORD = process.env.SMTP_PASSWORD
 
 export async function POST(request: NextRequest) {
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
         // Prepare email content
         const mailOptions = {
             from: SMTP_USER,
-            to: 'sales@yourcompany.com', // Replace with your sales email
+            to: 'guptaswitchgears@gmail.com', // Replace with your sales email
             subject: 'New Quotation Request',
             text: `
         New quotation request from:
