@@ -1,49 +1,50 @@
-import {NextResponse} from "next/server";
-import prismadb from "@/lib/prismadb";
+// REGISTRATION HANDLER WITH AUTO-LOGIN
 import bcrypt from "bcryptjs";
-
-export async function POST(
-    req: Request,
-    {params} : {params:{storeId:string}}
-){
-    try{
-        const body = await req.json()
-        const {name, email, password, number} = body;
-        const hashedPassword = await bcrypt.hash(password, 10)
+import prismadb from "@/lib/prismadb";
+import jwt from "jsonwebtoken";
 
 
-        if(!name){
-            return new NextResponse("name is Required",{status: 400})
+export async function POST(req: Request,
+                           {params} : {params:{storeId:string}}) {
+    try {
+        const body = await req.json();
+        const { name, email, password, number } = body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        if (!name || name.length < 1) {
+            return new Response(JSON.stringify({ error: "Name is required" }), {
+                status: 400,
+            });
         }
-        if(name.length<1)
-        {
-            return new NextResponse("name is Required",{status: 400})
-        }if(!number){
-            return new NextResponse("number is Required",{status: 400})
+        if (!number || number.length < 10) {
+            return new Response(JSON.stringify({ error: "Number is required and must be 10 digits" }), {
+                status: 400,
+            });
         }
-        if(number.length<10)
-        {
-            return new NextResponse("number is Required of 10 digits",{status: 400})
+        if (password.length < 6) {
+            return new Response(JSON.stringify({ error: "Password must be at least 6 characters long" }), {
+                status: 400,
+            });
+        }
+        if (!email) {
+            return new Response(JSON.stringify({ error: "Email is required" }), {
+                status: 400,
+            });
+        }
+        if (!params.storeId) {
+            return new Response(JSON.stringify({ error: "Store ID is required" }), {
+                status: 400,
+            });
         }
 
-        if(password.length<6){
-            return new NextResponse("password is Required to be more than 6 characters",{status: 400})
+        const storeByUserId = await prismadb.store.findFirst({ where: { id: params.storeId } });
+        if (!storeByUserId) {
+            return new Response(JSON.stringify({ error: "Unauthorized" }), {
+                status: 403,
+            });
         }
 
-        if(!email){
-            return new NextResponse("email is Required",{status: 400})
-        }
-        if(!password){
-            return new NextResponse("password is Required",{status: 400})
-        }
-        if(!params.storeId){
-            return new NextResponse("storeId is required", {status:400})
-        }
-        const storeByUserId = await prismadb.store.findFirst({where:{id:params.storeId,
-}})
-        if(!storeByUserId){
-            return new NextResponse("Unauthorized",{status:403});
-        }
+        // Create a new user
         const user = await prismadb.user.create({
             data: {
                 name,
@@ -51,30 +52,47 @@ export async function POST(
                 email,
                 password: hashedPassword,
                 storeId: params.storeId,
-            }
-        })
+            },
+        });
 
-        return NextResponse.json({ user });
+        // Generate a JWT token for auto-login
 
-    }catch (error) {
-        console.log('USERS_POST',error)
-        return new NextResponse("Internal error",{status: 500})
+        const secret = process.env.JWT_SECRET || "default_secret";
+
+        const token = jwt.sign(
+            { id: user.id, email: user.email, storeId: user.storeId },
+            secret,
+        );
+        return new Response(
+            JSON.stringify({
+                message: "Registration successful and user logged in",
+                token,
+                user: { id: user.id, name: user.name, email: user.email },
+            }),
+            { status: 200 }
+        );
+    } catch (error) {
+        console.log("USERS_POST", error);
+        return new Response(JSON.stringify({ error: "Internal error" }), {
+            status: 500,
+        });
     }
 }
 
-export async function GET(
-    req: Request,
-    {params} : {params:{storeId:string}}
-){
-    try{
-
-        if(!params.storeId){
-            return new NextResponse("storeId is required", {status:400})
+// FETCH USERS HANDLER
+export async function GET(req: Request,
+                          {params} : {params:{storeId:string}}) {
+    try {
+        if (!params.storeId) {
+            return new Response(JSON.stringify({ error: "Store ID is required" }), {
+                status: 400 });
         }
-        const users = await prismadb.user.findMany({where:{storeId:params.storeId,}})
-        return NextResponse.json(users)
-    }catch (error) {
-        console.log('USERS_GET',error)
-        return new NextResponse("Internal error",{status: 500})
+
+        const users = await prismadb.user.findMany({ where: { storeId: params.storeId } });
+        return new Response(JSON.stringify(users), { status: 200 });
+    } catch (error) {
+        console.log("USERS_GET", error);
+        return new Response(JSON.stringify({ error: "Internal error" }), {
+            status: 500 });
     }
 }
