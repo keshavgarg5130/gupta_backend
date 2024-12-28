@@ -2,6 +2,7 @@
 import bcrypt from "bcryptjs";
 import prismadb from "@/lib/prismadb";
 import jwt from "jsonwebtoken";
+import {NextResponse} from "next/server";
 
 
 export async function POST(req: Request,
@@ -44,6 +45,13 @@ export async function POST(req: Request,
             });
         }
 
+        // Clear existing token (if any)
+        const response = NextResponse.json({
+            message: "Clearing existing session..."
+        });
+        response.headers.set("Set-Cookie", "token=; HttpOnly; Path=/; Max-Age=0");
+
+
         // Create a new user
         const user = await prismadb.user.create({
             data: {
@@ -71,6 +79,7 @@ export async function POST(req: Request,
             }),
             { status: 200 }
         );
+
     } catch (error) {
         console.log("USERS_POST", error);
         return new Response(JSON.stringify({ error: "Internal error" }), {
