@@ -31,7 +31,8 @@ export async function POST(request: NextRequest) {
         // Prepare email content
         const mailOptions = {
             from: SMTP_USER,
-            to: 'guptaswitchgears@gmail.com', // Replace with your sales email
+            to: 'sales@guptaswitchgears.com',
+            cc: 'ashish@guptaswitchgears.com',// Replace with your sales email
             subject: 'New Quotation Request',
             text: `
         New quotation request from:
