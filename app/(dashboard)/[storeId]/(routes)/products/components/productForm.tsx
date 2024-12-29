@@ -357,7 +357,20 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
                             <FormItem>
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                    <Input disabled={loading} placeholder='Product description' {...field}/>
+                                    <textarea
+                                        disabled={loading}
+                                        placeholder="Product description"
+                                        {...field}
+                                        rows={10} // Set the number of rows
+                                        style={{
+                                            width: '100%', // Set the width to occupy full container width
+                                            minHeight: '200px', // Ensure enough height for 10-12 lines
+                                            padding: '10px', // Add padding for better UX
+                                            fontSize: '16px', // Adjust font size
+                                            lineHeight: '1.5', // Adjust line height for readability
+                                            resize: 'vertical', // Allow vertical resizing if needed
+                                        }}
+                                    ></textarea>
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
@@ -366,7 +379,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({initialData,categories,
                             <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                                 <FormControl>
                                     <Checkbox
-                                    checked={field.value}
+                                        checked={field.value}
                                     onCheckedChange={field.onChange}
                                     />
                                 </FormControl>

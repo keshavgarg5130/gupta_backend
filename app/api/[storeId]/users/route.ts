@@ -1,12 +1,14 @@
 // REGISTRATION HANDLER WITH AUTO-LOGIN
 import bcrypt from "bcryptjs";
-import prismadb from "@/lib/prismadb";
+
 import jwt from "jsonwebtoken";
-import {NextResponse} from "next/server";
+
+import prismadb from "@/lib/prismadb";
 
 
-export async function POST(req: Request,
-                           {params} : {params:{storeId:string}}) {
+// Registration Handler
+export async function POST( req: Request,
+                            {params} : {params:{storeId:string}} ) {
     try {
         const body = await req.json();
         const { name, email, password, number } = body;
@@ -45,12 +47,6 @@ export async function POST(req: Request,
             });
         }
 
-        // Clear existing token (if any)
-        const response = NextResponse.json({
-            message: "Clearing existing session..."
-        });
-        response.headers.set("Set-Cookie", "token=; HttpOnly; Path=/; Max-Age=0");
-
 
         // Create a new user
         const user = await prismadb.user.create({
@@ -64,22 +60,25 @@ export async function POST(req: Request,
         });
 
         // Generate a JWT token for auto-login
-
         const secret = process.env.JWT_SECRET || "default_secret";
 
         const token = jwt.sign(
             { id: user.id, email: user.email, storeId: user.storeId },
             secret,
-        );
-        return new Response(
-            JSON.stringify({
-                message: "Registration successful and user logged in",
-                token,
-                user: { id: user.id, name: user.name, email: user.email },
-            }),
-            { status: 200 }
+            { expiresIn: "1h" }
         );
 
+        const successResponse = new Response(JSON.stringify({
+            message: "Registration successful and user logged in",
+            token,
+            user: { id: user.id, name: user.name, email: user.email },
+        }), {
+            headers: {
+                "Set-Cookie": `token=${token}; HttpOnly; Path=/; Max-Age=3600`
+            }
+        });
+
+        return successResponse;
     } catch (error) {
         console.log("USERS_POST", error);
         return new Response(JSON.stringify({ error: "Internal error" }), {
