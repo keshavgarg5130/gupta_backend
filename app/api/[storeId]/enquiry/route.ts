@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
         const mailOptions = {
             from: SMTP_USER,
             to: 'sales@guptaswitchgears.com',
-            cc: 'ashish@guptaswitchgears.com',// Replace with your sales email
+            cc: 'ashish@guptaswitchgears.com, guptaswitchgears@gmail.com',
             subject: 'New Quotation Request',
             text: `
         New quotation request from:

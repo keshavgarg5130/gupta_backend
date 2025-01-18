@@ -52,7 +52,6 @@ export async function POST( req: Request,
         const user = await prismadb.user.create({
             data: {
                 name,
-                number,
                 email,
                 password: hashedPassword,
                 storeId: params.storeId,

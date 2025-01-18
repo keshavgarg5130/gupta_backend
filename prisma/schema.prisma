@@ -164,15 +164,17 @@ model OrderItem {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  storeId   String
-  store     Store    @relation("StoreToUser", fields: [storeId], references: [id])
-  name      String
-  email     String   @unique
-  number    Decimal
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(uuid())
+  storeId         String
+  store           Store    @relation("StoreToUser", fields: [storeId], references: [id])
+  name            String
+  email           String?  @unique
+  password        String?
+  googleId        String?  @unique
+  phoneNumber     String?  @unique
+  isPhoneVerified Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@index([storeId])
 }
