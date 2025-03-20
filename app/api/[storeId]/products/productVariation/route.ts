@@ -18,7 +18,8 @@ export async function GET(
                 isArchived: false,
             },
             select: {
-                id: true, // Only fetch the product ID
+                id: true,
+                slug: true,// Only fetch the product ID
                 category: {
                     select: {
                         id: true, // Fetch specific fields of related category
