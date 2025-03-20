@@ -3,7 +3,7 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
     req: Request,
-    { params }: { params: { productSlug?: string } }
+    { params }: { params: { productSlug: string } }
 ) {
     try {
         const { productSlug } = params;
