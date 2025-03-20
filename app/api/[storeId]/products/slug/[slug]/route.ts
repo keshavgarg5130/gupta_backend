@@ -6,7 +6,9 @@ export async function GET(
     { params }: { params: { productSlug: string } }
 ) {
     try {
-        const { productSlug } = params;
+
+        const url = new URL(req.url);
+        const productSlug = url.pathname.split("/").pop();
 
         if ( !productSlug) {
             return new NextResponse("productId or productSlug is required", { status: 400 });
