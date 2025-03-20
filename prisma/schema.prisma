@@ -112,6 +112,7 @@ model Product {
   mPrice          Decimal
   gstRate         Decimal
   price           Decimal
+  slug            String?
   isFeatured      Boolean       @default(false)
   isArchived      Boolean       @default(false)
   currentRatingId String
@@ -164,17 +165,23 @@ model OrderItem {
 }
 
 model User {
-  id              String   @id @default(uuid())
+  id              String    @id @default(uuid())
   storeId         String
-  store           Store    @relation("StoreToUser", fields: [storeId], references: [id])
-  name            String
-  email           String?  @unique
+  store           Store     @relation("StoreToUser", fields: [storeId], references: [id])
+  name            String?
+  email           String?   @unique
+  email_otp       String?
+  email_otp_exp   DateTime?
+  verified_email  Boolean   @default(false)
   password        String?
-  googleId        String?  @unique
-  phoneNumber     String?  @unique
-  isPhoneVerified Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  googleId        String?   @unique
+  phoneNumber     String?   @unique
+  phone_otp       String?
+  phone_otp_exp   DateTime?
+  isPhoneVerified Boolean   @default(false)
+  picture         String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   @@index([storeId])
 }

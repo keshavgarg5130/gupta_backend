@@ -1,6 +1,7 @@
 import {auth} from "@clerk/nextjs/server";
 import {NextResponse} from "next/server";
 import prismadb from "@/lib/prismadb";
+import {slugify} from "@/lib/utils";
 
 export async function POST(
     req: Request,
@@ -14,7 +15,7 @@ export async function POST(
 
         const body = await req.json()
         const {name, mPrice, price,gstRate,brandId,description, categoryId,images,currentRatingId,polesId,isFeatured, isArchived } = body;
-
+        const slug = slugify(name).toLowerCase();
         console.log(images);
         if(!userId){
             return new NextResponse("Unauthenticated",{status: 401})
@@ -65,6 +66,7 @@ export async function POST(
                 categoryId,
                 currentRatingId,
                 polesId,
+                slug,
                 images:{
                     createMany:{
                         data:[

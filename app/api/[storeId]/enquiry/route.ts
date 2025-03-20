@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer';
 // Sample credentials (in a real scenario, these would be environment variables)
 const SMTP_HOST = 'smtp.gmail.com'
 const SMTP_PORT = 587
-const SMTP_USER = 'keshav.garg.5130@gmail.com'
+const SMTP_USER = process.env.SMTP_USER
 const SMTP_PASSWORD = process.env.SMTP_PASSWORD
 
 export async function POST(request: NextRequest) {

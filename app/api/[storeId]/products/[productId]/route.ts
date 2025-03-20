@@ -9,7 +9,7 @@ export async function GET (
     try {
 
         if(!params.productId){
-            return new NextResponse("productId is required", {status:400})
+            return new NextResponse("productSlug is required", {status:400})
         }
 
         const product = await prismadb.product.findUnique({
@@ -64,7 +64,7 @@ export async function PATCH (
             return new NextResponse("CategoryId is Required",{status: 400})
         }
         if(!params.productId){
-            return new NextResponse("productId is required", {status:400})
+            return new NextResponse("productSlug is required", {status:400})
         }
         const storeByUserId = await prismadb.store.findFirst({where:{id:params.storeId,
                 userId:userId}})

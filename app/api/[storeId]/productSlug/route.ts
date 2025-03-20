@@ -9,17 +9,17 @@ export async function GET (
 ){
 
    try {
-        const productId = await prismadb.product.findMany({
+        const productSlug = await prismadb.product.findMany({
             where:{
                 storeId: params.storeId,
             },
             select:{
-                id:true,
+                slug:true,
             }
 
         })
-        return NextResponse.json(productId)
-    }catch(e){console.log("ProductId_GET Error: ]", e);
+        return NextResponse.json(productSlug)
+    }catch(e){console.log("ProductSlug_GET Error: ]", e);
         return new NextResponse("internal Error", {status: 500})}
 
 }
