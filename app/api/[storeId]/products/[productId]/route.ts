@@ -1,33 +1,43 @@
-import {NextResponse} from "next/server";
 import {auth} from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 
-export async function GET (
+export async function GET(
     req: Request,
-    { params }: { params: { productId: string}},
-){
+    { params }: { params: { productId?: string; productSlug?: string } }
+) {
     try {
+        const { productId, productSlug } = params;
 
-        if(!params.productId){
-            return new NextResponse("productSlug is required", {status:400})
+        if (!productId && !productSlug) {
+            return new NextResponse("productId or productSlug is required", { status: 400 });
         }
 
-        const product = await prismadb.product.findUnique({
-            where:{
-                id:params.productId,
-            },include:{
+        const product = await prismadb.product.findFirst({
+            where: {
+                OR: [
+                    { id: productId },
+                    { slug: productSlug }
+                ]
+            },
+            include: {
                 images: true,
-                category:true,
+                category: true,
                 currentRating: true,
                 poles: true,
                 brand: true,
             }
+        });
 
-        })
-        return NextResponse.json(product)
-    }catch(error){console.log("[ProductId_GET] Error: ]", error);
-        return new NextResponse("internal Error", {status: 500})}
+        if (!product) {
+            return new NextResponse("Product not found", { status: 404 });
+        }
 
+        return NextResponse.json(product);
+    } catch (error) {
+        console.error("[ProductId_GET] Error:", error);
+        return new NextResponse("Internal Server Error", { status: 500 });
+    }
 }
 
 export async function PATCH (
