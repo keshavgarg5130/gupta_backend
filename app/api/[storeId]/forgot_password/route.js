@@ -24,6 +24,7 @@ const sendOtpEmail = async (email, otp) => {
 };
 
 export async function POST (req, res) {
+    try{
     if (req.method === "POST") {
         const { email } = req.body;
 
@@ -65,5 +66,7 @@ export async function POST (req, res) {
         }
     } else {
         res.status(405).json({ error: "Method Not Allowed" });
+    }}catch(error) {
+        console.error("Error sending OTP", error);
     }
 }

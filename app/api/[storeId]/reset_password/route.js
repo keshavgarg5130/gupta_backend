@@ -37,7 +37,7 @@ export async function POST (req, res) {
                 },
             });
 
-            return res.status(200).json({ message: "Password updated successfully" });
+            return res.status(200).json({ message: "ok" });
         } catch (error) {
             console.error("Error resetting password", error);
             return res.status(500).json({ error: "Internal Server Error" });
