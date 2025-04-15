@@ -38,6 +38,7 @@ export async function GET(req ,{params}) {
         });
         if (!user.googleId){
             await prismadb.user.update({
+                where: { email: userInfo.email },
                 data: {
                     googleId: userInfo.id,
                     email: userInfo.email,
