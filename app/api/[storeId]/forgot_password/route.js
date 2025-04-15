@@ -48,7 +48,7 @@ export async function POST (req, res) {
             expiry.setMinutes(expiry.getMinutes() + 10); // OTP expires in 10 minutes
 
             // Store the OTP and expiry time
-            await prisma.user.update({
+            await prismadb.user.update({
                 where: { email },
                 data: {
                     otp,
