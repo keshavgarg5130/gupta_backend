@@ -34,8 +34,20 @@ export async function GET(req ,{params}) {
         if (!userInfo.email) return NextResponse.json({ error: "User info retrieval failed. Try log-in via email" }, { status: 400 });
 
         let user = await prismadb.user.findUnique({
-            where: { googleId: userInfo.id },
+            where: { email: userInfo.email },
         });
+        if (!user.googleId){
+            await prismadb.user.update({
+                data: {
+                    googleId: userInfo.id,
+                    email: userInfo.email,
+                    name: userInfo.name,
+                    picture: userInfo.picture,
+                    verified_email: userInfo.verified_email,
+                    storeId: params.storeId
+                },
+            })
+        }
         // If new user, save to database
         if (!user) {
             user = await prismadb.user.create({
