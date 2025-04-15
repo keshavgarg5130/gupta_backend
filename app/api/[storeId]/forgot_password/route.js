@@ -46,7 +46,7 @@ export async function POST(request) {
         await prismadb.user.update({
             where: { email },
             data: {
-                email_otp,
+                email_otp:otp,
                 email_otp_exp: expiry,
             },
         })
