@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import prismadb from "../../../../../../lib/prismadb";
 
-export async function GET(req) {
+export async function GET(req ,{params}) {
     try {
         const { searchParams } = new URL(req.url);
         const code = searchParams.get("code");
@@ -44,7 +44,8 @@ export async function GET(req) {
                     email: userInfo.email,
                     name: userInfo.name,
                     picture: userInfo.picture,
-                    verified_email: userInfo.verified_email
+                    verified_email: userInfo.verified_email,
+                    storeId: params.storeId
                 },
             });
         }
