@@ -67,6 +67,6 @@ export async function POST (req, res) {
     } else {
         res.status(405).json({ error: "Method Not Allowed" });
     }}catch(error) {
-        console.error("Error sending OTP", error);
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 }
