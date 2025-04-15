@@ -9,7 +9,7 @@ export async function POST(req: Request,
                            {params}: {params: {storeId: string}}) {
     try {
         const body = await req.json();
-        const {name, email, password} = body;
+        const { email, password} = body;
         const existingUser = await prismadb.user.findUnique({
             where: {
                 storeId: params.storeId,
@@ -75,7 +75,6 @@ export async function POST(req: Request,
         // Create a new user
         const user = await prismadb.user.create({
             data: {
-                name,
                 email,
                 password: hashedPassword,
                 storeId: params.storeId,
