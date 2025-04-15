@@ -22,53 +22,40 @@ const sendOtpEmail = async (email, otp) => {
 
     await transporter.sendMail(mailOptions);
 };
-
-export async function POST (req, res) {
-    try{
-    if (req.method === "POST") {
-        const { email } = req.body;
+export async function POST(request) {
+    try {
+        const body = await request.json()
+        const { email } = body
 
         if (!email) {
-            return res.status(400).json({ error: "Email is required" });
+            return new Response(JSON.stringify({ error: "Email is required" }), { status: 400 })
         }
 
-        try {
-            // Check if the user exists
-            const user = await prismadb.user.findUnique({
-                where: { email },
-            });
+        const user = await prismadb.user.findUnique({
+            where: { email },
+        })
 
-            if (!user) {
-                return res.status(404).json({ error: "User not found" });
-            }
-
-            // Generate a 6-digit OTP
-            const otp = crypto.randomBytes(3).toString("hex").toUpperCase(); // Generate a 6-digit OTP
-            const expiry = new Date();
-            expiry.setMinutes(expiry.getMinutes() + 10); // OTP expires in 10 minutes
-
-            // Store the OTP and expiry time
-            await prismadb.user.update({
-                where: { email },
-                data: {
-                    otp,
-                    otpExpiry: expiry,
-                },
-            });
-
-            // Send OTP to the user via email
-            await sendOtpEmail(email, otp);
-
-            return res.status(200).json({ message: "OTP sent to your email" });
-        } catch (error) {
-            console.error("Error sending OTP", error);
-            return res.status(500).json({ error: "Internal Server Error" });
+        if (!user) {
+            return new Response(JSON.stringify({ error: "User not found" }), { status: 404 })
         }
-    } else {
-        res.status(405).json({ error: "Method Not Allowed" });
-    }}catch(error) {
-        console.log(error)
-        return res.status(500).json({ error: "Internal Server Error" });
 
+        const otp = crypto.randomBytes(3).toString("hex").toUpperCase()
+        const expiry = new Date()
+        expiry.setMinutes(expiry.getMinutes() + 10)
+
+        await prismadb.user.update({
+            where: { email },
+            data: {
+                otp,
+                otpExpiry: expiry,
+            },
+        })
+
+        await sendOtpEmail(email, otp)
+
+        return new Response(JSON.stringify({ message: "OTP sent to your email" }), { status: 200 })
+    } catch (error) {
+        console.error("Forgot Password Error:", error)
+        return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500 })
     }
 }
