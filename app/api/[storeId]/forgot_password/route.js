@@ -68,5 +68,6 @@ export async function POST (req, res) {
         res.status(405).json({ error: "Method Not Allowed" });
     }}catch(error) {
         return res.status(500).json({ error: "Internal Server Error" });
+        console.log(error)
     }
 }
