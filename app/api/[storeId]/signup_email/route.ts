@@ -88,10 +88,12 @@ export async function POST(req: Request,
         return new Response(JSON.stringify({
             message: "Registration successful and user logged in",
             token,
-            user: {id: user.id, name: user.name, email: user.email},
+            user: { id: user.id, name: user.name, email: user.email },
         }), {
+            status: 200,
             headers: {
-                "Set-Cookie": `token=${token}; HttpOnly; Path=/; Max-Age=3000000`
+                "Set-Cookie": `token=${token}; Path=/; HttpOnly; Max-Age=3000000; SameSite=None; Secure`,
+                "Content-Type": "application/json",
             }
         });
     } catch (error) {
