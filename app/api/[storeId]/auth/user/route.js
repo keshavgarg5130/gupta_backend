@@ -1,9 +1,9 @@
 import { verify } from "jsonwebtoken";
+import { cookies } from "next/headers"; // <--- important
 
 export async function GET(req) {
-    // Set CORS headers
     const origin = req.headers.get('origin') || '';
-    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgeasrs.com']; // You can add more
+    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgeasrs.com'];
     const headers = {
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
@@ -11,19 +11,16 @@ export async function GET(req) {
         'Access-Control-Allow-Headers': 'Authorization,Content-Type',
     };
 
-    // Handle OPTIONS preflight request
     if (req.method === 'OPTIONS') {
         return new Response(null, { status: 204, headers });
     }
 
-    // Get Authorization header
-    const authHeader = req.headers.get('authorization');
-    console.log("Authorization header:", authHeader);
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const cookieStore = cookies(); // <--- get cookies
+    const token = cookieStore.get('token')?.value; // <--- get token cookie
+
+    if (!token) {
         return new Response(JSON.stringify({ user: null, authenticated: false }), { status: 401, headers });
     }
-
-    const token = authHeader.split(' ')[1]; // Get token part
 
     try {
         const decoded = verify(token, process.env.JWT_SECRET);
