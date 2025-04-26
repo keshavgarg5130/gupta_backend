@@ -7,6 +7,18 @@ import {generateToken} from "@/lib/utils";
 // Registration Handler
 export async function POST(req: Request,
                            {params}: {params: {storeId: string}}) {
+    const origin = req.headers.get('origin') || '';
+    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgeasrs.com'];
+    const headers = {
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
+        'Access-Control-Allow-Methods': 'GET,OPTIONS,POST,PUT,DELETE',
+        'Access-Control-Allow-Headers': 'Authorization,Content-Type',
+    };
+
+    if (req.method === 'OPTIONS') {
+        return new Response(null, { status: 204, headers });
+    }
     try {
         const body = await req.json();
         const { email, password} = body;
