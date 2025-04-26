@@ -1,7 +1,16 @@
 import { verify } from "jsonwebtoken";
 import { cookies } from "next/headers"; // for Next.js App Router
 
-export async function GET () {
+export async function GET (req,res) {
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST,PUT,DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization,Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
     const cookieStore = cookies();
     const token = cookieStore.get("token")?.value; // Assuming "token" is the cookie name
 
