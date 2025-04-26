@@ -18,6 +18,7 @@ export async function GET(req) {
 
     // Get Authorization header
     const authHeader = req.headers.get('authorization');
+    console.log("Authorization header:", authHeader);
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return new Response(JSON.stringify({ user: null, authenticated: false }), { status: 401, headers });
     }
