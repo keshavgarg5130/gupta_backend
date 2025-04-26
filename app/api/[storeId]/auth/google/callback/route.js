@@ -71,12 +71,13 @@ export async function GET(req ,{params}) {
         );
 
         // Set cookie with JWT token
-        const response = NextResponse.redirect('http://localhost:3000/');
+        const response = NextResponse.json({ success: true });
+
         response.cookies.set("auth_token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "None", // Required for cross-domain authentication
-            maxAge: 30 * 24 * 60 * 60, // 30 days
+            sameSite: "None",
+            maxAge: 30 * 24 * 60 * 60,
             path: "/",
         });
 
