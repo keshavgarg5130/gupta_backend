@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+
 import prismadb from "../../../../../../lib/prismadb";
 import {generateToken} from "../../../../../../lib/utils";
 
