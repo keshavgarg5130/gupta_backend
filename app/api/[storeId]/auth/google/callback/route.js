@@ -71,7 +71,7 @@ export async function GET(req ,{params}) {
         );
 
         // Set cookie with JWT token
-        const response = NextResponse.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+        const response = NextResponse.redirect('http://localhost:3000/');
         response.cookies.set("auth_token", token, {
             httpOnly: true,
             secure: true,
