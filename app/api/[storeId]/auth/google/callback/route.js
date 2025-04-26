@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import prismadb from "../../../../../../lib/prismadb";
+import {generateToken} from "../../../../../../lib/utils";
 
 export async function GET(req ,{params}) {
     try {
@@ -64,24 +65,16 @@ export async function GET(req ,{params}) {
         }
 
         // Generate JWT Token for session
-        const token = jwt.sign(
-            { id: userInfo.id, email: userInfo.email, name: userInfo.name, picture: userInfo.picture },
-            process.env.JWT_SECRET,
-            { expiresIn: "30d" }
-        );
+        const token = generateToken(user)
 
-        // Set cookie with JWT token
-        const response = NextResponse.json({ success: true });
-
-        response.cookies.set("auth_token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "None",
-            maxAge: 30 * 24 * 60 * 60,
-            path: "/",
+        return new Response(null, {
+            status: 302,
+            headers: {
+                "Location": "http://localhost:3000/",
+                "Set-Cookie": `token=${token}; HttpOnly; Path=/; Max-Age=3000000; SameSite=None; Secure`
+            }
         });
 
-        return response;
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
