@@ -1,28 +1,34 @@
 import { verify } from "jsonwebtoken";
-import { cookies } from "next/headers"; // for Next.js App Router
 
-export async function GET (req,res) {
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST,PUT,DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Authorization,Content-Type');
+export async function GET(req) {
+    // Set CORS headers
+    const origin = req.headers.get('origin') || '';
+    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgeasrs.com']; // You can add more
+    const headers = {
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
+        'Access-Control-Allow-Methods': 'GET,OPTIONS,POST,PUT,DELETE',
+        'Access-Control-Allow-Headers': 'Authorization,Content-Type',
+    };
 
+    // Handle OPTIONS preflight request
     if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
+        return new Response(null, { status: 204, headers });
     }
-    const cookieStore = cookies();
-    const token = cookieStore.get("token")?.value; // Assuming "token" is the cookie name
 
-    if (!token) {
-        return Response.json({ user: null, authenticated: false }, { status: 401 });
+    // Get Authorization header
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return new Response(JSON.stringify({ user: null, authenticated: false }), { status: 401, headers });
     }
+
+    const token = authHeader.split(' ')[1]; // Get token part
 
     try {
         const decoded = verify(token, process.env.JWT_SECRET);
-        return Response.json({ user: decoded, authenticated: true }, { status: 200 });
-    } catch (e) {
-        console.error("Error verifying token:", e);
-        return Response.json({ user: null, authenticated: false }, { status: 401 });
+        return new Response(JSON.stringify({ user: decoded, authenticated: true }), { status: 200, headers });
+    } catch (error) {
+        console.error('Error verifying token:', error);
+        return new Response(JSON.stringify({ user: null, authenticated: false }), { status: 401, headers });
     }
 }
