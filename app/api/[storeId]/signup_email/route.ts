@@ -8,7 +8,7 @@ import {generateToken} from "@/lib/utils";
 export async function POST(req: Request,
                            {params}: {params: {storeId: string}}) {
     const origin = req.headers.get('origin') || '';
-    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgears.com/'];
+    const allowedOrigins = [ 'https://guptaswitchgears.com/'];
 
     const corsHeaders = {
         'Access-Control-Allow-Credentials': 'true',
