@@ -3,7 +3,7 @@ import { cookies } from "next/headers"; // <--- important
 
 export async function GET(req) {
     const origin = req.headers.get('origin') || '';
-    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgeasrs.com'];
+    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgears.com'];
     const headers = {
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
@@ -17,6 +17,7 @@ export async function GET(req) {
 
     const cookieStore = cookies(); // <--- get cookies
     const token = cookieStore.get('token')?.value; // <--- get token cookie
+    console.log(token)
 
     if (!token) {
         return new Response(JSON.stringify({ user: null, authenticated: false }), { status: 401, headers });
