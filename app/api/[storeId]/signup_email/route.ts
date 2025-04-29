@@ -8,9 +8,9 @@ import {generateToken} from "@/lib/utils";
 export async function POST(req: Request,
                            {params}: {params: {storeId: string}}) {
     const origin = req.headers.get('origin') || '';
-    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgears.com'];
+    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgears.com/'];
 
-    const headers = {
+    const corsHeaders = {
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '', // ✅ Must NOT be '*'
         'Access-Control-Allow-Methods': 'GET,OPTIONS,POST,PUT,DELETE',
@@ -20,7 +20,11 @@ export async function POST(req: Request,
 
 
     if (req.method === 'OPTIONS') {
-        return new Response(null, { status: 204, headers });
+        return new Response(null, { status: 204, headers: {
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+
+            } });
     }
     try {
         const body = await req.json();
@@ -47,7 +51,9 @@ export async function POST(req: Request,
                     user: {id: existingUser.id, name: existingUser.name, email: existingUser.email},
                 }), {
                     headers: {
-                        "Set-Cookie": `token=${token}; HttpOnly; Path=/; Max-Age=3000000`
+                        ...corsHeaders,
+                        'Content-Type': 'application/json',
+                        'Set-Cookie': `token=${token}; Path=/; HttpOnly; Max-Age=3000000; SameSite=None; Secure`
                     }
                 });
 
