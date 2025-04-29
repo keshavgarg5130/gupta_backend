@@ -3,7 +3,7 @@ import { cookies } from "next/headers"; // <--- important
 
 export async function GET(req) {
     const origin = req.headers.get('origin') || '';
-    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgears.com'];
+    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgears.com/'];
     const corsHeaders = {
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
