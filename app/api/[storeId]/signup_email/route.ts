@@ -8,7 +8,7 @@ import {generateToken} from "@/lib/utils";
 export async function POST(req: Request,
                            {params}: {params: {storeId: string}}) {
     const origin = req.headers.get('origin') || '';
-    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgeasrs.com'];
+    const allowedOrigins = ['http://localhost:3000', 'https://guptaswitchgears.com'];
     const headers = {
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : '',
