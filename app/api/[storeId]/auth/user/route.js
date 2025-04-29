@@ -12,7 +12,7 @@ export async function GET(req) {
     };
 
     if (req.method === 'OPTIONS') {
-        return new Response(null, { status: 204, headers });
+        return new Response(null, { status: 204, corsHeaders });
     }
 
     const cookieStore = cookies(); // <--- get cookies
