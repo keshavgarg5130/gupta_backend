@@ -70,7 +70,7 @@ export async function GET(req ,{params}) {
         return new Response(null, {
             status: 302,
             headers: {
-                "Location": "https://guptaswitchgears.com",
+                "Location": `https://guptaswitchgears.com/auth/callback?token=${token}`,
                 "Set-Cookie": `token=${token}; HttpOnly; Path=/; Max-Age=3000000; SameSite=None; Secure`
             }
         });
