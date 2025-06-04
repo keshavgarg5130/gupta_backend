@@ -28,7 +28,7 @@ export async function POST(req: Request,
             cartItems,
             pricing,
         } = body;
-
+        console.log(userEmail)
         const order = await prismadb.order.create({
             data: {
                 storeId:params.storeId,
