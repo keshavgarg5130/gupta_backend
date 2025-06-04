@@ -158,6 +158,7 @@ model Order {
   pincode         String?
   shipping        Float
   shippingMethod  String
+  PaymentMethod   String
   state           String?
   tax             Float
   total           Float
