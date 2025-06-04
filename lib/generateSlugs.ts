@@ -12,14 +12,18 @@ async function generateSlugs() {
     });
 
     for (const product of products) {
-        const slug = slugify(product.name ?? "").toLowerCase(); // ✅ Ensure a valid string
+        try {
+            const slug = slugify(product.name ?? "").toLowerCase(); // ✅ Ensure a valid string
 
-        await prisma.product.update({
-            where: { id: product.id },
-            data: { slug },
-        });
-        upadateConter++
-        console.log(`Updated product ${product.name} with slug: ${slug}:::${upadateConter}`);
+            await prisma.product.update({
+                where: {id: product.id},
+                data: {slug},
+            });
+            upadateConter++
+            console.log(`Updated product ${product.name} with slug: ${slug}:::${upadateConter}`);
+        }catch (e) {
+            console.log(e);
+        }
     }
 
     console.log("Slug generation completed!");

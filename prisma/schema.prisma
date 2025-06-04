@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,27 +11,27 @@ model Store {
   id            String          @id @default(uuid())
   name          String
   userId        String
-  billboard     Billboard[]     @relation("StoreToBillboards")
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
+  billboard     Billboard[]     @relation("StoreToBillboards")
+  Brand         Brand[]         @relation("StoreToBrand")
   categories    Category[]      @relation("StoreToCategory")
   CurrentRating CurrentRating[] @relation("StoreToCurrentRating")
   Poles         Poles[]         @relation("StoreToPoles")
   Products      Product[]       @relation("StoreToProducts")
-  Brand         Brand[]         @relation("StoreToBrand")
   User          User[]          @relation("StoreToUser")
 }
 
 model Billboard {
   id         String     @id @default(uuid())
   storeId    String
-  store      Store      @relation("StoreToBillboards", fields: [storeId], references: [id])
   label      String
   imageUrl   String
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  categories Category[]
+  store      Store      @relation("StoreToBillboards", fields: [storeId], references: [id])
   Brand      Brand[]    @relation("BrandToBillboard")
+  categories Category[]
 
   @@index([storeId])
 }
@@ -45,12 +39,12 @@ model Billboard {
 model Category {
   id          String    @id @default(uuid())
   storeId     String
-  store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
   billboardId String
-  billboard   Billboard @relation(fields: [billboardId], references: [id])
   name        String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
   products    Product[] @relation("CategoryToProducts")
 
   @@index([storeId])
@@ -60,12 +54,12 @@ model Category {
 model Brand {
   id          String    @id @default(uuid())
   storeId     String
-  store       Store     @relation("StoreToBrand", fields: [storeId], references: [id])
   billboardId String
-  billboard   Billboard @relation("BrandToBillboard", fields: [billboardId], references: [id])
   name        String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  billboard   Billboard @relation("BrandToBillboard", fields: [billboardId], references: [id])
+  store       Store     @relation("StoreToBrand", fields: [storeId], references: [id])
   product     Product[] @relation("BrandToProducts")
 
   @@index([storeId])
@@ -75,11 +69,11 @@ model Brand {
 model CurrentRating {
   id        String    @id @default(uuid())
   storeId   String
-  store     Store     @relation("StoreToCurrentRating", fields: [storeId], references: [id])
   name      String
   value     String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  store     Store     @relation("StoreToCurrentRating", fields: [storeId], references: [id])
   Products  Product[]
 
   @@index([storeId])
@@ -88,12 +82,12 @@ model CurrentRating {
 model Poles {
   id        String    @id @default(uuid())
   storeId   String
-  store     Store     @relation("StoreToPoles", fields: [storeId], references: [id])
   name      String
   value     String
-  products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  store     Store     @relation("StoreToPoles", fields: [storeId], references: [id])
+  products  Product[]
 
   @@index([storeId])
 }
@@ -101,27 +95,26 @@ model Poles {
 model Product {
   id              String        @id @default(uuid())
   storeId         String
-  store           Store         @relation("StoreToProducts", fields: [storeId], references: [id])
   categoryId      String
-  category        Category      @relation("CategoryToProducts", fields: [categoryId], references: [id])
-  brand           Brand         @relation("BrandToProducts", fields: [brandId], references: [id])
-  brandId         String
   name            String
-  description     String
   mPrice          Decimal
   gstRate         Decimal
   price           Decimal
-  slug            String?
   isFeatured      Boolean       @default(false)
   isArchived      Boolean       @default(false)
   currentRatingId String
+  polesId         String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  brandId         String
+  description     String
+  slug            String?
+  images          Image[]
+  brand           Brand         @relation("BrandToProducts", fields: [brandId], references: [id])
+  category        Category      @relation("CategoryToProducts", fields: [categoryId], references: [id])
   currentRating   CurrentRating @relation(fields: [currentRatingId], references: [id])
   poles           Poles         @relation(fields: [polesId], references: [id])
-  polesId         String
-  images          Image[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  store           Store         @relation("StoreToProducts", fields: [storeId], references: [id])
 
   @@index([storeId])
   @@index([categoryId])
@@ -133,48 +126,44 @@ model Product {
 model Image {
   id         String   @id @default(uuid())
   productsId String
-  product    Product  @relation(fields: [productsId], references: [id], onDelete: Cascade)
   url        String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  product    Product  @relation(fields: [productsId], references: [id], onDelete: Cascade)
 
   @@index([productsId])
 }
 
 model Order {
-  id             String  @id @default(uuid())
-  customOrderId  String  @unique
-  storeId        String
-  shippingMethod String
-  gstInvoice     Boolean
-  userEmail      String
-  mobile         String
-  altMobile      String
-  pincode        String?
-  state          String?
-  city           String?
-  country        String?
-  address        String?
-  landmark       String?
-
-  gstNumber       String?
-  businessName    String?
-  businessPhone   String?
+  id              String     @id @default(uuid())
+  storeId         String
+  address         String?
+  createdAt       DateTime   @default(now())
+  altMobile       String
+  amount          Float
   billingAddress  String?
   billingCity     String?
-  billingState    String?
   billingCountry  String?
-  billingPincode  String?
   billingLandmark String?
-
-  amount   Float
-  tax      Float
-  shipping Float
-  total    Float
-
-  items CartItem[]
-
-  createdAt DateTime @default(now())
+  billingPincode  String?
+  billingState    String?
+  businessName    String?
+  businessPhone   String?
+  city            String?
+  country         String?
+  gstInvoice      Boolean
+  gstNumber       String?
+  landmark        String?
+  mobile          String
+  pincode         String?
+  shipping        Float
+  shippingMethod  String
+  state           String?
+  tax             Float
+  total           Float
+  customOrderId   String     @unique
+  userEmail       String
+  items           CartItem[]
 }
 
 model CartItem {
@@ -186,28 +175,27 @@ model CartItem {
   price     Float
   quantity  Int
   stock     Int
-
-  order Order @relation(fields: [orderId], references: [id])
+  order     Order  @relation(fields: [orderId], references: [id])
 }
 
 model User {
   id              String    @id @default(uuid())
   storeId         String
-  store           Store     @relation("StoreToUser", fields: [storeId], references: [id])
   name            String?
   email           String?   @unique
-  email_otp       String?
-  email_otp_exp   DateTime?
-  verified_email  Boolean   @default(false)
   password        String?
-  googleId        String?   @unique
-  phoneNumber     String?   @unique
-  phone_otp       String?
-  phone_otp_exp   DateTime?
-  isPhoneVerified Boolean   @default(false)
-  picture         String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  googleId        String?   @unique
+  isPhoneVerified Boolean   @default(false)
+  phoneNumber     String?   @unique
+  picture         String?
+  verified_email  Boolean   @default(false)
+  email_otp       String?
+  phone_otp       String?
+  email_otp_exp   DateTime?
+  phone_otp_exp   DateTime?
+  store           Store     @relation("StoreToUser", fields: [storeId], references: [id])
 
   @@index([storeId])
 }

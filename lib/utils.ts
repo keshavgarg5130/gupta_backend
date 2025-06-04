@@ -27,3 +27,24 @@ export function slugify(name: string): string {
       .replace(/\-\-+/g, '-')       // Replace multiple hyphens with a single hyphen
       .trim();
 }
+
+type PaymentMethod = "BANK_TRANSFER" | "PHONEPE" | "COD";
+
+export function calculateCharges(total: number, method: PaymentMethod) {
+  const shipping = total >= 5000 ? 0 : 500;
+
+  let transactionFee = 0;
+  if (method === "PHONEPE") {
+    transactionFee = total * 0.02;
+  } else if (method === "COD") {
+    transactionFee = total * 0.01;
+  }
+
+  const grandTotal = total + shipping + transactionFee;
+
+  return {
+    shipping,
+    transactionFee,
+    grandTotal,
+  };
+}
