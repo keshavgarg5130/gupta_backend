@@ -174,7 +174,7 @@ model CartItem {
   image     String
   price     Float
   quantity  Int
-  order Order @relation(fields: [orderId], references: [id])
+  order     Order  @relation(fields: [orderId], references: [id])
 }
 
 model User {
