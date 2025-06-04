@@ -4,11 +4,13 @@ import prismadb from "../../../../lib/prismadb";
 
 export async function POST(req) {
     try {
-        const { email, otp, newPassword } = await req.json();
+        const body = await req.json();
+        const{email, newPassword, otp} = body;
 
         if (!email || !otp || !newPassword) {
             return NextResponse.json(
-                { error: "Email, OTP, and new password are required" }, { status: 400 }
+                { error: "Email, OTP, and new password are required" },
+                { status: 400 }
             );
         }
 
@@ -24,6 +26,7 @@ export async function POST(req) {
 
         const now = new Date();
         if (user.email_otp_exp && now > new Date(user.email_otp_exp)) {
+
             return NextResponse.json({ error: "OTP has expired" }, { status: 400 });
         }
 

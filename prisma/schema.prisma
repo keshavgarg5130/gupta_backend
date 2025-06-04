@@ -24,7 +24,6 @@ model Store {
   CurrentRating CurrentRating[] @relation("StoreToCurrentRating")
   Poles         Poles[]         @relation("StoreToPoles")
   Products      Product[]       @relation("StoreToProducts")
-  order         Order[]         @relation("StoreToOrder")
   Brand         Brand[]         @relation("StoreToBrand")
   User          User[]          @relation("StoreToUser")
 }
@@ -120,9 +119,9 @@ model Product {
   poles           Poles         @relation(fields: [polesId], references: [id])
   polesId         String
   images          Image[]
-  orderItem       OrderItem[]
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([storeId])
   @@index([categoryId])
@@ -143,25 +142,52 @@ model Image {
 }
 
 model Order {
-  id         String      @id @default(uuid())
-  storeId    String
-  store      Store       @relation("StoreToOrder", fields: [storeId], references: [id])
-  orderItems OrderItem[]
-  isPaid     Boolean     @default(false)
-  phone      String      @default("")
-  address    String      @default("")
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id             String  @id @default(uuid())
+  customOrderId  String  @unique
+  storeId        String
+  shippingMethod String
+  gstInvoice     Boolean
+  userEmail      String
+  mobile         String
+  altMobile      String
+  pincode        String?
+  state          String?
+  city           String?
+  country        String?
+  address        String?
+  landmark       String?
 
-  @@index([storeId])
+  gstNumber       String?
+  businessName    String?
+  businessPhone   String?
+  billingAddress  String?
+  billingCity     String?
+  billingState    String?
+  billingCountry  String?
+  billingPincode  String?
+  billingLandmark String?
+
+  amount   Float
+  tax      Float
+  shipping Float
+  total    Float
+
+  items CartItem[]
+
+  createdAt DateTime @default(now())
 }
 
-model OrderItem {
-  id        String  @id @default(uuid())
-  order     Order   @relation(fields: [orderId], references: [id])
+model CartItem {
+  id        String @id @default(uuid())
   orderId   String
   productId String
-  product   Product @relation(fields: [productId], references: [id])
+  name      String
+  image     String
+  price     Float
+  quantity  Int
+  stock     Int
+
+  order Order @relation(fields: [orderId], references: [id])
 }
 
 model User {
@@ -184,4 +210,10 @@ model User {
   updatedAt       DateTime  @updatedAt
 
   @@index([storeId])
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  PHONEPE
+  COD
 }
