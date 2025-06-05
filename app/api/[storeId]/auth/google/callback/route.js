@@ -37,21 +37,21 @@ export async function GET(req ,{params}) {
         let user = await prismadb.user.findUnique({
             where: { email: userInfo.email },
         });
-        if (!user.googleId){
-            await prismadb.user.update({
-                where: { email: userInfo.email },
-                data: {
-                    googleId: userInfo.id,
-                    email: userInfo.email,
-                    name: userInfo.name,
-                    picture: userInfo.picture,
-                    verified_email: userInfo.verified_email,
-                    storeId: params.storeId
-                },
-            })
-        }
-        // If new user, save to database
-        if (!user) {
+        if (user) {
+            if (!user.googleId) {
+                await prismadb.user.update({
+                    where: { email: userInfo.email },
+                    data: {
+                        googleId: userInfo.id,
+                        name: userInfo.name,
+                        picture: userInfo.picture,
+                        verified_email: userInfo.verified_email,
+                        storeId: params.storeId,
+                    },
+                });
+            }
+        } else {
+            // If new user, create it
             user = await prismadb.user.create({
                 data: {
                     googleId: userInfo.id,
@@ -59,7 +59,7 @@ export async function GET(req ,{params}) {
                     name: userInfo.name,
                     picture: userInfo.picture,
                     verified_email: userInfo.verified_email,
-                    storeId: params.storeId
+                    storeId: params.storeId,
                 },
             });
         }

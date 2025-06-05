@@ -186,7 +186,7 @@ export async function POST(req: Request,
 
         await transporter.sendMail(customerMail);
         await transporter.sendMail(adminMail);
-        return NextResponse.json({ success: true, order });
+        return NextResponse.json({ success: true, orderId: order.customOrderId });
     } catch (error) {
         console.error("Checkout API Error:", error);
         return NextResponse.json({ success: false, error: "Failed to process order" }, { status: 500 });
