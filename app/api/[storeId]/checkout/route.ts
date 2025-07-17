@@ -22,7 +22,7 @@ export async function POST(req: Request,
             userEmail,
             shippingMethod,
             gstInvoice,
-            paymentMethod,
+            PaymentMethod,
             userDetails,
             shippingDetails,
             gstDetails,
@@ -37,7 +37,7 @@ export async function POST(req: Request,
                 shippingMethod,
                 customOrderId,
                 gstInvoice,
-                paymentMethod,
+                PaymentMethod,
                 mobile: userDetails.mobile,
                 altMobile: userDetails.altMobile,
                 ...shippingDetails,
@@ -106,7 +106,7 @@ export async function POST(req: Request,
     Subtotal: ₹${pricing.amount}
     Tax: ₹${pricing.tax}
     Shipping: ₹${pricing.shipping}
-    Payment: ${paymentMethod}
+    Payment: ${PaymentMethod}
     Total: ₹${pricing.total}
     
     ITEMS ORDERED
