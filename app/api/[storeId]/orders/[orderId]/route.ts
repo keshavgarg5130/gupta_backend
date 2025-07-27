@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 
+
 // GET single order details
 export async function GET(
     req: Request,
