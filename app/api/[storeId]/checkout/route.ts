@@ -66,7 +66,7 @@ export async function POST(req: Request,
 
         const customerMail = {
             from: process.env.SMTP_EMAIL,
-            to: userEmail,
+            to: userDetails.email,
             subject: "Order received successfully ",
             text: `Thanks for placing your order. Your order no, is ${customOrderId}
              We will send you detailed email with order invoice and delivery details once the payment is verified 
