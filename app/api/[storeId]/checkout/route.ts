@@ -126,7 +126,7 @@ export async function POST(req: Request,
     <h2>Order Details</h2>
     <p><strong>Order ID:</strong> ${customOrderId}</p>
     <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-    <p><strong>Customer Email:</strong> ${userEmail}</p>
+    <p><strong>Customer Email:</strong> ${userDetails.email}</p>
     
     <h2>Customer Details</h2>
     <p><strong>Mobile:</strong> ${userDetails?.mobile || 'Not provided'}</p>
