@@ -19,7 +19,6 @@ export async function POST(req: Request,
             quantity: number;
         };
         const {
-            userEmail,
             shippingMethod,
             gstInvoice,
             PaymentMethod,
@@ -29,11 +28,10 @@ export async function POST(req: Request,
             cartItems,
             pricing,
         } = body;
-        console.log(userEmail)
         const order = await prismadb.order.create({
             data: {
                 storeId:params.storeId,
-                userEmail:userEmail,
+                userEmail:userDetails.email,
                 shippingMethod,
                 customOrderId,
                 gstInvoice,
@@ -84,7 +82,8 @@ export async function POST(req: Request,
     =============
     Order ID: ${customOrderId}
     Date: ${new Date().toLocaleString()}
-    Customer Email: ${userEmail}
+    Customer Name: ${userDetails?.name}
+    Customer Email: $userDetails?.email}
     
     CUSTOMER DETAILS
     ================
